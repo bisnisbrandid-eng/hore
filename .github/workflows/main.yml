@@ -30,9 +30,9 @@ jobs:
           npx cap init fintrack com.fintrack.app --web-dir=dist
           npx cap add android
 
-      - name: Inject Java 17 config into build.gradle
+      - name: Force Java 17 in build.gradle
         run: |
-          sed -i '/defaultConfig {/a \ \ \ \ compileOptions {\n \ \ \ \ \ \ sourceCompatibility JavaVersion.VERSION_17\n \ \ \ \ \ \ targetCompatibility JavaVersion.VERSION_17\n \ \ \ \ }' android/app/build.gradle
+          sed -i '/defaultConfig {/a \ \ \ \ compileOptions {\n \ \ \ \ \ \ sourceCompatibility JavaVersion.VERSION_17\n \ \ \ \ \ \ targetCompatibility JavaVersion.VERSION_17\n \ \ \ \ }\n \ \ \ \ kotlinOptions {\n \ \ \ \ \ \ jvmTarget = "17"\n \ \ \ \ }' android/app/build.gradle
 
       - name: Copy web build into Android
         run: npx cap copy android
