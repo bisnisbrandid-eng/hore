@@ -32,8 +32,9 @@ jobs:
           mkdir -p android/gradle/wrapper
           curl -L https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o gradle-8.2.1-bin.zip
           unzip -q gradle-8.2.1-bin.zip -d gradle-8.2.1
-          cp gradle-8.2.1/gradle-8.2.1/lib/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.jar
-          chmod +x android/gradlew
+          cd android
+          ../gradle-8.2.1/gradle-8.2.1/bin/gradle wrapper --gradle-version 8.2.1
+          chmod +x gradlew
 
       - name: Build APK
         run: |
