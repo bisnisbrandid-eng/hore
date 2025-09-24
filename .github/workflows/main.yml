@@ -27,6 +27,7 @@ jobs:
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli --save
+          npm install @capacitor/android --save
           npx cap init fintrack com.fintrack.app --web-dir=dist
           npx cap add android
 
