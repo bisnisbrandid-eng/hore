@@ -22,32 +22,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Generate Android project kalau folder android/ kosong
-      - name: Generate Android folder
+      - name: Add Android platform (Capacitor)
         run: |
-          if [ ! -d "android" ]; then
-            npx react-native init TempApp
-            mv TempApp/android ./android
-            mv TempApp/gradlew .
-            mv TempApp/gradlew.bat .
-            mv TempApp/gradle ./gradle
-            rm -rf TempApp
-          fi
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+          npm install @capacitor/android
+          npx cap add android
 
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x android/gradlew
 
       - name: Build Debug APK
-        run: cd android && ../gradlew assembleDebug --stacktrace
+        run: cd android && ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
+          name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
