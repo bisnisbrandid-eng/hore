@@ -24,6 +24,7 @@ jobs:
       - name: Generate Android project (Capacitor)
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --save
+          - run: chmod +x android/gradlew
 
       - name: Build APK
         run: |
