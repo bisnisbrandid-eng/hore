@@ -4,41 +4,44 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
       - name: Install dependencies
         run: npm install
 
-      - name: Install Capacitor Android
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android --save
+      - name: Add Capacitor Android
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android --save
+          npx cap add android || echo "Android already exists"
 
       - name: Prepare Gradle Wrapper
         run: |
           mkdir -p android/gradle/wrapper
           curl -L https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o gradle-8.2.1-bin.zip
           unzip -q gradle-8.2.1-bin.zip -d gradle-8.2.1
-          cp gradle-8.2.1/gradle-8.2.1/lib/gradle-wrapper-8.2.1.jar android/gradle/wrapper/gradle-wrapper.jar
+          cp gradle-8.2.1/gradle-8.2.1/lib/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
 
       - name: Build APK
         run: |
           cd android
-          chmod +x ./gradlew
           ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
