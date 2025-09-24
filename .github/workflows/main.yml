@@ -24,21 +24,24 @@ jobs:
       - name: Build React app
         run: npm run build
 
-      - name: Install Capacitor
+      - name: Install Capacitor + Android
         run: |
-          npm install @capacitor/core @capacitor/cli --save
-          npm install @capacitor/android --save
+          npm install @capacitor/core @capacitor/cli @capacitor/android --save
           npx cap init fintrack com.fintrack.app --web-dir=dist
           npx cap add android
 
-      - name: Copy build to Android
+      - name: Create gradle.properties (force Java 17)
+        run: |
+          echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" >> android/gradle.properties
+
+      - name: Copy web build into Android
         run: npx cap copy android
 
-      - name: Setup JDK
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
 
       - name: Build APK
         run: cd android && ./gradlew assembleDebug
@@ -48,4 +51,3 @@ jobs:
         with:
           name: FinTrack-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-
