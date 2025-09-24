@@ -21,14 +21,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate Android project (Capacitor)
+      - name: Install Capacitor Android
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --save
-          - run: chmod +x android/gradlew
 
       - name: Build APK
         run: |
           cd android
+          chmod +x ./gradlew
           ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
