@@ -2,8 +2,9 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
@@ -13,49 +14,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build React app
-        run: npm run build
-
-      - name: Install Capacitor + Android
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android --save
-          npx cap init fintrack com.fintrack.app --web-dir=dist
-          npx cap add android
-
-      - name: Force Java 17 in build.gradle
-        run: |
-          sed -i '/android {/a \
-            compileOptions {\
-              sourceCompatibility JavaVersion.VERSION_17\
-              targetCompatibility JavaVersion.VERSION_17\
-            }\
-            kotlinOptions {\
-              jvmTarget = "17"\
-            }' android/app/build.gradle
-
-      - name: Copy web build into Android
-        run: npx cap copy android
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: 17
 
-      - name: Build APK
+      - name: Grant execute permission for gradlew
+        run: chmod +x android/gradlew
+
+      - name: Build Debug APK
         working-directory: android
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: FinTrack-debug-apk
+          name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
