@@ -22,8 +22,14 @@ jobs:
         run: npm install
 
       - name: Install Capacitor Android
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android --save
+
+      - name: Prepare Gradle Wrapper
         run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android --save
+          mkdir -p android/gradle/wrapper
+          curl -L https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o gradle-8.2.1-bin.zip
+          unzip -q gradle-8.2.1-bin.zip -d gradle-8.2.1
+          cp gradle-8.2.1/gradle-8.2.1/lib/gradle-wrapper-8.2.1.jar android/gradle/wrapper/gradle-wrapper.jar
 
       - name: Build APK
         run: |
