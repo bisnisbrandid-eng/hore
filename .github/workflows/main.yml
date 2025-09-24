@@ -32,13 +32,14 @@ jobs:
 
       - name: Force Java 17 in build.gradle
         run: |
-          sed -i '/android {/a \ \ \ \ compileOptions {\
- \ \ \ \ \ \ sourceCompatibility JavaVersion.VERSION_17\
- \ \ \ \ \ \ targetCompatibility JavaVersion.VERSION_17\
- \ \ \ \ }\
- \ \ \ \ kotlinOptions {\
- \ \ \ \ \ \ jvmTarget = "17"\
- \ \ \ \ }' android/app/build.gradle
+          sed -i '/android {/a \
+            compileOptions {\
+              sourceCompatibility JavaVersion.VERSION_17\
+              targetCompatibility JavaVersion.VERSION_17\
+            }\
+            kotlinOptions {\
+              jvmTarget = "17"\
+            }' android/app/build.gradle
 
       - name: Copy web build into Android
         run: npx cap copy android
