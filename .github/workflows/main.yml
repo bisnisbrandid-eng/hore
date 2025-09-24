@@ -11,37 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name: Install dependencies
         run: npm install
 
-      - name: Add Capacitor Android
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android --save
-          npx cap add android || echo "Android already exists"
+      - name: Install Capacitor Android
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android --save
 
-      - name: Prepare Gradle Wrapper
+      - name: Generate capacitor.settings.gradle
         run: |
-          mkdir -p android/gradle/wrapper
-          curl -L https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o gradle-8.2.1-bin.zip
-          unzip -q gradle-8.2.1-bin.zip -d gradle-8.2.1
-          cd android
-          ../gradle-8.2.1/gradle-8.2.1/bin/gradle wrapper --gradle-version 8.2.1
-          chmod +x gradlew
+          echo "include ':capacitor-android'" > capacitor.settings.gradle
+          echo "project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')" >> capacitor.settings.gradle
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
       - name: Build APK
-        run: |
-          cd android
-          ./gradlew assembleDebug --stacktrace
+        run: cd android && ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
